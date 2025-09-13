@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io;
 use std::io::Read;
 
+use crate::bigram::run;
 use crate::tokenizer::Tokenizer;
 // use std::prelude::*;
 
@@ -19,11 +20,19 @@ fn load_file(path: &str) -> Result<String, io::Error> {
 
 fn main() -> Result<(), std::io::Error> {
     let contents = load_file("./data/input.txt")?;
-    let tokenizer = Tokenizer::new(&contents);
-    
-    let txt = &contents[0..20];
-    println!("{:?}", tokenizer.encode(txt));
-    println!("{}", tokenizer.decode(&tokenizer.encode(txt)));
-    Ok(())
+    // let tokenizer = Tokenizer::new(&contents);
+    run(&contents)
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn tokenizer() {
+        let contents = load_file("./data/input.txt").unwrap();
+        let tokenizer = Tokenizer::new(&contents);
+        
+        assert_eq!(tokenizer.decode(&tokenizer.encode(&contents)), contents);
+    }
+}

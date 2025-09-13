@@ -25,6 +25,7 @@ impl Tokenizer {
     }
 
     pub fn encode(&self, input: &str) -> Vec<usize> {
+        // input.chars().map(|c| self.stoi.get(&c).unwrap_or(self.stoi.len())).collect()
         input.chars().map(|c| self.stoi[&c]).collect()
     }
 
