@@ -4,6 +4,10 @@ use super::tokenizer;
 use candle_core::{Result, Device, DType, Tensor};
 use candle_nn::{embedding, Embedding, Module, VarBuilder, VarMap};
 
+const BATCH_SIZE: usize = 32;
+const NUM_EPOCHS: usize = 3000;
+const NUM_EMBEDDINGS: usize = 64;
+
 struct BigramLanguageModel {
     token_embedding_table: Embedding,
     var_map: VarMap
@@ -25,16 +29,11 @@ impl BigramLanguageModel {
     }
 
     fn forward(&self, xs: &Tensor) -> Result<Tensor> {
-        let (_, time_size) = xs.shape().dims2()?;
+        let logits = self.token_embedding_table.forward(xs); // (B, T, C)
+        logits
+    }
 
-        let token_embedding = self.token_embedding_table.forward(xs)?; // (B, T, C)
-
-        // let position_embedding = self.position_embedding_table.forward(&Tensor::arange(
-        //     0,
-        //     time_size as u32,
-        //     xs.device(),
-        // )?)?; // (T,C)
-        todo!()
+    fn train(&self, dataset: &[usize]) {
     }
 }
 
@@ -42,9 +41,7 @@ pub fn run(
     input: &str, 
     // device: &Device
 ) -> Result<(), std::io::Error> {
-    let batch_size: usize = 32;
     let block_size: usize = 8;
-    let max_iters: usize = 3000;
     let eval_interval: usize = 300;
     let learning_rate = 1e-2;
     let eval_iters: usize = 200;
@@ -56,6 +53,8 @@ pub fn run(
     let train_size = data.len()*0.9 as usize;
     let train_data = &data[0..train_size];
     let val_data = &data[train_size..];
+
+    // let mut model = BigramLanguageModel::new();
 
 
 
